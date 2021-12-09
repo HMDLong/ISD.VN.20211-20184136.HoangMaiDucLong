@@ -54,7 +54,7 @@ public class MediaHandler extends FXMLScreenHandler{
                 if (spinnerChangeNumber.getValue() > media.getQuantity()) throw new MediaNotAvailableException();
                 Cart cart = Cart.getCart();
                 // if media already in cart then we will increase the quantity by 1 instead of create the new cartMedia
-                CartMedia mediaInCart = home.getBController().checkMediaInCart(media);
+                CartMedia mediaInCart = home.getBaseController().checkMediaInCart(media);
                 if (mediaInCart != null) {
                     mediaInCart.setQuantity(mediaInCart.getQuantity() + 1);
                 }else{

@@ -2,49 +2,58 @@ package entity.order;
 
 import entity.media.Media;
 
+/**
+ * Class for media items in order.
+ *
+ * @author Admin
+ *
+ */
 public class OrderMedia {
-    
-    private Media media;
-    private int price;
-    private int quantity;
 
-    public OrderMedia(Media media, int quantity, int price) {
-        this.media = media;
-        this.quantity = quantity;
-        this.price = price;
-    }
-    
-    @Override
-    public String toString() {
-        return "{" +
-            "  media='" + media + "'" +
-            ", quantity='" + quantity + "'" +
-            ", price='" + price + "'" +
-            "}";
-    }
-    
-    public Media getMedia() {
-        return this.media;
-    }
+  private Media media;
+  private int price;
+  private int quantity;
 
-    public void setMedia(Media media) {
-        this.media = media;
-    }
+  /**
+   * OrderMedia constructor.
+   *
+   * @param media
+   * @param quantity
+   * @param price
+   */
+  public OrderMedia(Media media, int quantity, int price) {
+    this.media = media;
+    this.quantity = quantity;
+    this.price = price;
+  }
 
-    public int getQuantity() {
-        return this.quantity;
-    }
+  @Override
+  public String toString() {
+    return "{" + "  media='" + media + "'" + ", quantity='" + quantity + "'" + ", price='" + price + "'" + "}";
+  }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+  public Media getMedia() {
+    return this.media;
+  }
 
-    public int getPrice() {
-        return this.price;
-    }
+  public void setMedia(Media media) {
+    this.media = media;
+  }
 
-    public void setPrice(int price) {
-        this.price = price;
-    }
+  public int getQuantity() {
+    return this.quantity;
+  }
+
+  public void setQuantity(int quantity) {
+    this.quantity = quantity;
+  }
+
+  public int getPrice() {
+    return this.price;
+  }
+
+  public void setPrice(int price) {
+    this.price = price;
+  }
 
 }

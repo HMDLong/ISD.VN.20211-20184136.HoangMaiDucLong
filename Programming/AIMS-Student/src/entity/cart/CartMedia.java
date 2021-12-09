@@ -2,54 +2,63 @@ package entity.cart;
 
 import entity.media.Media;
 
+/**
+ * Class for item in the cart.
+ *
+ * @author Admin
+ *
+ */
 public class CartMedia {
-    
-    private Media media;
-    private int quantity;
-    private int price;
 
-    public CartMedia(){
+  private Media media;
+  private int quantity;
+  private int price;
 
-    }
+  public CartMedia() {
 
-    public CartMedia(Media media, Cart cart, int quantity, int price) {
-        this.media = media;
-        this.quantity = quantity;
-        this.price = price;
-    }
-    
-    public Media getMedia() {
-        return this.media;
-    }
+  }
 
-    public void setMedia(Media media) {
-        this.media = media;
-    }
+  /**
+   * CartMedia constructor.
+   *
+   * @param media the media to be added to cart
+   * @param cart current Cart instance
+   * @param quantity quantity of product to be added to cart
+   * @param price the price of the product to be added to cart
+   */
+  public CartMedia(Media media, Cart cart, int quantity, int price) {
+    this.media = media;
+    this.quantity = quantity;
+    this.price = price;
+  }
 
-    public int getQuantity() {
-        return this.quantity;
-    }
+  public Media getMedia() {
+    return this.media;
+  }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+  public void setMedia(Media media) {
+    this.media = media;
+  }
 
-    public int getPrice() {
-        return this.price;
-    }
+  public int getQuantity() {
+    return this.quantity;
+  }
 
-    public void setPrice(int price) {
-        this.price = price;
-    }
+  public void setQuantity(int quantity) {
+    this.quantity = quantity;
+  }
 
-    @Override
-    public String toString() {
-        return "{" 
-            + " media='" + media + "'" 
-            + ", quantity='" + quantity + "'" 
-            + "}";
-    }
+  public int getPrice() {
+    return this.price;
+  }
+
+  public void setPrice(int price) {
+    this.price = price;
+  }
+
+  @Override
+  public String toString() {
+    return "{" + " media='" + media + "'" + ", quantity='" + quantity + "'" + "}";
+  }
 
 }
-
-    

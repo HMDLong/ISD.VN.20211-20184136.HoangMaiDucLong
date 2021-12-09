@@ -28,150 +28,172 @@ import views.screen.shipping.ShippingScreenHandler;
 
 public class CartScreenHandler extends BaseScreenHandler {
 
-	private static Logger LOGGER = Utils.getLogger(CartScreenHandler.class.getName());
+  private static Logger LOGGER = Utils.getLogger(CartScreenHandler.class.getName());
 
-	@FXML
-	private ImageView aimsImage;
+  @FXML
+  private ImageView aimsImage;
 
-	@FXML
-	private Label pageTitle;
+  @FXML
+  private Label pageTitle;
 
-	@FXML
-	VBox vboxCart;
+  @FXML
+  VBox vboxCart;
 
-	@FXML
-	private Label shippingFees;
+  @FXML
+  private Label shippingFees;
 
-	@FXML
-	private Label labelAmount;
+  @FXML
+  private Label labelAmount;
 
-	@FXML
-	private Label labelSubtotal;
+  @FXML
+  private Label labelSubtotal;
 
-	@FXML
-	private Label labelVAT;
+  @FXML
+  private Label labelVAT;
 
-	@FXML
-	private Button btnPlaceOrder;
+  @FXML
+  private Button btnPlaceOrder;
 
-	public CartScreenHandler(Stage stage, String screenPath) throws IOException {
-		super(stage, screenPath);
+  /**
+   * CartScreenHandler constructor.
+   *
+   * @param stage
+   * @param screenPath
+   * @throws IOException
+   */
+  public CartScreenHandler(Stage stage, String screenPath) throws IOException {
+    super(stage, screenPath);
 
-		// fix relative image path caused by fxml
-		File file = new File("assets/images/Logo.png");
-		Image im = new Image(file.toURI().toString());
-		aimsImage.setImage(im);
+    // fix relative image path caused by fxml
+    File file = new File("assets/images/Logo.png");
+    Image im = new Image(file.toURI().toString());
+    aimsImage.setImage(im);
 
-		// on mouse clicked, we back to home
-		aimsImage.setOnMouseClicked(e -> {
-			homeScreenHandler.show();
-		});
+    // on mouse clicked, we back to home
+    aimsImage.setOnMouseClicked(e -> {
+      homeScreenHandler.show();
+    });
 
-		// on mouse clicked, we start processing place order usecase
-		btnPlaceOrder.setOnMouseClicked(e -> {
-			LOGGER.info("Place Order button clicked");
-			try {
-				requestToPlaceOrder();
-			} catch (SQLException | IOException exp) {
-				LOGGER.severe("Cannot place the order, see the logs");
-				exp.printStackTrace();
-				throw new PlaceOrderException(Arrays.toString(exp.getStackTrace()).replaceAll(", ", "\n"));
-			}
-			
-		});
-	}
+    // on mouse clicked, we start processing place order usecase
+    btnPlaceOrder.setOnMouseClicked(e -> {
+      LOGGER.info("Place Order button clicked");
+      try {
+        requestToPlaceOrder();
+      } catch (SQLException | IOException exp) {
+        LOGGER.severe("Cannot place the order, see the logs");
+        exp.printStackTrace();
+        throw new PlaceOrderException(Arrays.toString(exp.getStackTrace()).replaceAll(", ", "\n"));
+      }
 
-	public Label getLabelAmount() {
-		return labelAmount;
-	}
+    });
+  }
 
-	public Label getLabelSubtotal() {
-		return labelSubtotal;
-	}
+  public Label getLabelAmount() {
+    return labelAmount;
+  }
 
-	public ViewCartController getBController(){
-		return (ViewCartController) super.getBController();
-	}
+  public Label getLabelSubtotal() {
+    return labelSubtotal;
+  }
 
-	public void requestToViewCart(BaseScreenHandler prevScreen) throws SQLException {
-		setPreviousScreen(prevScreen);
-		setScreenTitle("Cart Screen");
-		getBController().checkAvailabilityOfProduct();
-		displayCartWithMediaAvailability();
-		show();
-	}
+  @Override
+  public ViewCartController getBaseController() {
+    return (ViewCartController) super.getBaseController();
+  }
 
-	public void requestToPlaceOrder() throws SQLException, IOException {
-		try {
-			// create placeOrderController and process the order
-			PlaceOrderController placeOrderController = new PlaceOrderController();
-			if (placeOrderController.getListCartMedia().size() == 0){
-				PopupScreen.error("You don't have anything to place");
-				return;
-			}
+  /**
+   * This method triggers when customer click on cart image to view cart.
+   *
+   * @param prevScreen
+   * @throws SQLException
+   */
+  public void requestToViewCart(BaseScreenHandler prevScreen) throws SQLException {
+    setPreviousScreen(prevScreen);
+    setScreenTitle("Cart Screen");
+    getBaseController().checkAvailabilityOfProduct();
+    displayCartWithMediaAvailability();
+    show();
+  }
 
-			placeOrderController.placeOrder();
-			
-			// display available media
-			displayCartWithMediaAvailability();
+  /**
+   * This method triggers when customer click place order button
+   * to place order.
+   *
+   * @throws SQLException
+   * @throws IOException
+   */
+  public void requestToPlaceOrder() throws SQLException, IOException {
+    try {
+      // create placeOrderController and process the order
+      PlaceOrderController placeOrderController = new PlaceOrderController();
+      if (placeOrderController.getListCartMedia().size() == 0) {
+        PopupScreen.error("You don't have anything to place");
+        return;
+      }
 
-			// create order
-			Order order = placeOrderController.createOrder();
+      placeOrderController.placeOrder();
 
-			// display shipping form
-			ShippingScreenHandler ShippingScreenHandler = new ShippingScreenHandler(this.stage, Configs.SHIPPING_SCREEN_PATH, order);
-			ShippingScreenHandler.setPreviousScreen(this);
-			ShippingScreenHandler.setHomeScreenHandler(homeScreenHandler);
-			ShippingScreenHandler.setScreenTitle("Shipping Screen");
-			ShippingScreenHandler.setBController(placeOrderController);
-			ShippingScreenHandler.show();
+      // display available media
+      displayCartWithMediaAvailability();
 
-		} catch (MediaNotAvailableException e) {
-			// if some media are not available then display cart and break usecase Place Order
-			displayCartWithMediaAvailability();
-		}
-	}
+      // create order
+      Order order = placeOrderController.createOrder();
 
-	public void updateCart() throws SQLException{
-		getBController().checkAvailabilityOfProduct();
-		displayCartWithMediaAvailability();
-	}
+      // display shipping form
+      ShippingScreenHandler shippingScreenHandler = new ShippingScreenHandler(this.stage, Configs.SHIPPING_SCREEN_PATH, order);
+      shippingScreenHandler.setPreviousScreen(this);
+      shippingScreenHandler.setHomeScreenHandler(homeScreenHandler);
+      shippingScreenHandler.setScreenTitle("Shipping Screen");
+      shippingScreenHandler.setBaseController(placeOrderController);
+      shippingScreenHandler.show();
 
-	void updateCartAmount(){
-		// calculate subtotal and amount
-		int subtotal = getBController().getCartSubtotal();
-		int vat = (int)((Configs.PERCENT_VAT/100)*subtotal);
-		int amount = subtotal + vat;
-		LOGGER.info("amount" + amount);
+    } catch (MediaNotAvailableException e) {
+      // if some media are not available then display cart and break usecase Place
+      // Order
+      displayCartWithMediaAvailability();
+    }
+  }
 
-		// update subtotal and amount of Cart
-		labelSubtotal.setText(Utils.getCurrencyFormat(subtotal));
-		labelVAT.setText(Utils.getCurrencyFormat(vat));
-		labelAmount.setText(Utils.getCurrencyFormat(amount));
-	}
-	
-	private void displayCartWithMediaAvailability(){
-		// clear all old cartMedia
-		vboxCart.getChildren().clear();
+  public void updateCart() throws SQLException {
+    getBaseController().checkAvailabilityOfProduct();
+    displayCartWithMediaAvailability();
+  }
 
-		// get list media of cart after check availability
-		List lstMedia = getBController().getListCartMedia();
+  void updateCartAmount() {
+    // calculate subtotal and amount
+    int subtotal = getBaseController().getCartSubtotal();
+    int vat = (int) ((Configs.PERCENT_VAT / 100) * subtotal);
+    int amount = subtotal + vat;
+    LOGGER.info("amount" + amount);
 
-		try {
-			for (Object cm : lstMedia) {
+    // update subtotal and amount of Cart
+    labelSubtotal.setText(Utils.getCurrencyFormat(subtotal));
+    labelVAT.setText(Utils.getCurrencyFormat(vat));
+    labelAmount.setText(Utils.getCurrencyFormat(amount));
+  }
 
-				// display the attribute of vboxCart media
-				CartMedia cartMedia = (CartMedia) cm;
-				MediaHandler mediaCartScreen = new MediaHandler(Configs.CART_MEDIA_PATH, this);
-				mediaCartScreen.setCartMedia(cartMedia);
+  private void displayCartWithMediaAvailability() {
+    // clear all old cartMedia
+    vboxCart.getChildren().clear();
 
-				// add spinner
-				vboxCart.getChildren().add(mediaCartScreen.getContent());
-			}
-			// calculate subtotal and amount
-			updateCartAmount();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    // get list media of cart after check availability
+    List lstMedia = getBaseController().getListCartMedia();
+
+    try {
+      for (Object cm : lstMedia) {
+
+        // display the attribute of vboxCart media
+        CartMedia cartMedia = (CartMedia) cm;
+        MediaHandler mediaCartScreen = new MediaHandler(Configs.CART_MEDIA_PATH, this);
+        mediaCartScreen.setCartMedia(cartMedia);
+
+        // add spinner
+        vboxCart.getChildren().add(mediaCartScreen.getContent());
+      }
+      // calculate subtotal and amount
+      updateCartAmount();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 }

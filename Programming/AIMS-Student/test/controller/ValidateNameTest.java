@@ -20,7 +20,7 @@ class ValidateNameTest {
 	 */
 	@Test
 	void testValidateName1() {
-		assertEquals(false, this.place_order_controller.validatePhoneNumber(null));
+		assertEquals(false, this.place_order_controller.validateName(null));
 	}
 	
 	/**
@@ -28,9 +28,9 @@ class ValidateNameTest {
 	 */
 	@Test
 	void testValidateName2() {
-		assertEquals(false, this.place_order_controller.validatePhoneNumber("Nguyen Van @"));
-		assertEquals(false, this.place_order_controller.validatePhoneNumber("Nguyen 1Van @"));
-		assertEquals(false, this.place_order_controller.validatePhoneNumber("Ngu7yen Van A"));
+		assertEquals(false, this.place_order_controller.validateName("Nguyen Van @"));
+		assertEquals(false, this.place_order_controller.validateName("Nguyen 1Van @"));
+		assertEquals(false, this.place_order_controller.validateName("Ngu7yen Van A"));
 	}
 
 	/**
@@ -38,7 +38,7 @@ class ValidateNameTest {
 	 */
 	@Test
 	void testValidateName3() {
-		assertEquals(true, this.place_order_controller.validatePhoneNumber("Nguyen Van A"));
-		assertEquals(true, this.place_order_controller.validatePhoneNumber("Donald Trump"));
+		assertEquals(true, this.place_order_controller.validateName("Nguyen Van A"));
+		assertEquals(true, this.place_order_controller.validateName("Donald Trump"));
 	}
 }
