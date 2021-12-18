@@ -95,9 +95,7 @@ public class InvoiceScreenHandler extends BaseScreenHandler {
         System.err.println("errors: " + e.getMessage());
         throw new ProcessInvoiceException(e.getMessage());
       }
-
     });
-
   }
 
   @FXML

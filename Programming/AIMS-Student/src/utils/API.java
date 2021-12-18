@@ -67,9 +67,7 @@ public class Api {
    * @return
    * @throws IOException
    */
-  public static String post(String url, String data
-  // , String token
-  ) throws IOException {
+  public static String post(String url, String data /*, String token*/) throws IOException {
     allowMethods("PATCH");
     URL line_api_url = new URL(url);
     String payload = data;

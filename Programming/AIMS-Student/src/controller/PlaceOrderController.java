@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import common.exception.InvalidDeliveryInfoException;
 import entity.cart.Cart;
 import entity.cart.CartMedia;
 import entity.invoice.Invoice;
@@ -76,16 +77,26 @@ public class PlaceOrderController extends BaseController {
   }
 
   /**
-   * The method validates the delivery info.
+   * This method validates the delivery info.
    *
    * @param info delivery information
    * @throws InterruptedException
    * @throws IOException
    */
   public void validateDeliveryInfo(HashMap<String, String> info) throws InterruptedException, IOException {
-    validateName(info.get("name"));
-    validatePhoneNumber(info.get("phone"));
-    validateAddress(info.get("address"));
+    String message = new String();
+    if (!validateName(info.get("name"))) {
+      message += "Invalid name\n";
+    }
+    if (!validatePhoneNumber(info.get("phone"))) {
+      message += "Invalid phone number\n";
+    }
+    if (!validateAddress(info.get("address"))) {
+      message += "Invalid address";
+    }
+    if (message.length() != 0) {
+      throw new InvalidDeliveryInfoException(message);
+    }
   }
 
   /**

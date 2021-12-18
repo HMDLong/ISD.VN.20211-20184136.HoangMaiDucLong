@@ -52,6 +52,14 @@ public class BaseScreenHandler extends FXMLScreenHandler {
     this.stage.setScene(this.scene);
     this.stage.show();
   }
+  
+  public void showAndWait() {
+    if (this.scene == null) {
+      this.scene = new Scene(this.content);
+    }
+    this.stage.setScene(this.scene);
+    this.stage.showAndWait();
+  }
 
   public void setScreenTitle(String string) {
     this.stage.setTitle(string);

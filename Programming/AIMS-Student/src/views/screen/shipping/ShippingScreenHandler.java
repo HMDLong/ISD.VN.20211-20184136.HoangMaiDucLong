@@ -17,9 +17,9 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -54,7 +54,7 @@ public class ShippingScreenHandler extends BaseScreenHandler implements Initiali
   private ComboBox<String> province;
 
   @FXML
-  private RadioButton rushOrderButton;
+  private CheckBox rushOrderBtn;
 
   private Order order;
 
@@ -91,9 +91,10 @@ public class ShippingScreenHandler extends BaseScreenHandler implements Initiali
     } catch (InvalidDeliveryInfoException e) {
       throw new InvalidDeliveryInfoException(e.getMessage());
     }
-
+    order.setDeliveryInfo(messages);
+    
     // If customer place a rush order, start process rush order
-    if (rushOrderButton.isSelected()) {
+    if (rushOrderBtn.isSelected()) {
       RushOrderController rushController = new RushOrderController();
       try {
         rushController.checkRushOrderSupport(Cart.getCart().getListMedia(), messages.get("province"));
@@ -101,22 +102,26 @@ public class ShippingScreenHandler extends BaseScreenHandler implements Initiali
         throw new RushUnsupportedException(e.getMessage());
       }
       // if satisfied, transition to rush order screen
-      RushOrderScreenHandler rushOrderScreen = new RushOrderScreenHandler(this.stage, Configs.RUSH_ORDER_SCREEN_PATH,
-          order);
+      RushOrderScreenHandler rushOrderScreenHandler = new RushOrderScreenHandler(this.stage, Configs.RUSH_ORDER_SCREEN_PATH, order);
+      rushOrderScreenHandler.setPreviousScreen(this);
+      rushOrderScreenHandler.setHomeScreenHandler(homeScreenHandler);
+      rushOrderScreenHandler.setScreenTitle("Rush Order");
+      rushOrderScreenHandler.setBaseController(rushController);
+      rushOrderScreenHandler.show();
+    } else {
+      // calculate shipping fees
+      int shippingFees = getBaseController().calculateShippingFee(order);
+      order.setShippingFees(shippingFees);
+      
+      // create invoice screen
+      Invoice invoice = getBaseController().createInvoice(order);
+      BaseScreenHandler invoiceScreenHandler = new InvoiceScreenHandler(this.stage, Configs.INVOICE_SCREEN_PATH, invoice);
+      invoiceScreenHandler.setPreviousScreen(this);
+      invoiceScreenHandler.setHomeScreenHandler(homeScreenHandler);
+      invoiceScreenHandler.setScreenTitle("Invoice Screen");
+      invoiceScreenHandler.setBaseController(getBaseController());
+      invoiceScreenHandler.show();
     }
-    // calculate shipping fees
-    int shippingFees = getBaseController().calculateShippingFee(order);
-    order.setShippingFees(shippingFees);
-    order.setDeliveryInfo(messages);
-
-    // create invoice screen
-    Invoice invoice = getBaseController().createInvoice(order);
-    BaseScreenHandler invoiceScreenHandler = new InvoiceScreenHandler(this.stage, Configs.INVOICE_SCREEN_PATH, invoice);
-    invoiceScreenHandler.setPreviousScreen(this);
-    invoiceScreenHandler.setHomeScreenHandler(homeScreenHandler);
-    invoiceScreenHandler.setScreenTitle("Invoice Screen");
-    invoiceScreenHandler.setBaseController(getBaseController());
-    invoiceScreenHandler.show();
   }
 
   @Override

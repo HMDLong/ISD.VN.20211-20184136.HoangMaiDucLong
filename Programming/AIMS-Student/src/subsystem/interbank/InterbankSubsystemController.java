@@ -81,17 +81,17 @@ public class InterbankSubsystemController {
     if (response == null) {
       return null;
     }
-    MyMap transcation = (MyMap) response.get("transaction");
-    CreditCard card = new CreditCard((String) transcation.get("cardCode"), 
-                                     (String) transcation.get("owner"),
-                                     Integer.parseInt((String) transcation.get("cvvCode")), 
-                                     (String) transcation.get("dateExpired"));
+    MyMap transaction = (MyMap) response.get("transaction");
+    CreditCard card = new CreditCard((String) transaction.get("cardCode"), 
+                                     (String) transaction.get("owner"),
+                                     Integer.parseInt((String) transaction.get("cvvCode")), 
+                                     (String) transaction.get("dateExpired"));
     PaymentTransaction trans = new PaymentTransaction((String) response.get("errorCode"), 
                                                        card,
-                                                       (String) transcation.get("transactionId"), 
-                                                       (String) transcation.get("transactionContent"),
-                                                       Integer.parseInt((String) transcation.get("amount")),
-                                                       (String) transcation.get("createdAt"));
+                                                       (String) transaction.get("transactionId"), 
+                                                       (String) transaction.get("transactionContent"),
+                                                       Integer.parseInt((String) transaction.get("amount")),
+                                                       (String) transaction.get("createdAt"));
     switch (trans.getErrorCode()) {
       case "00":
         break;
